@@ -17,3 +17,8 @@ class UsuarioRepository:
         query = self.session.query(UsuarioModel).where(UsuarioModel.codigo_dominio == codigo_dominio)
         result = self.session.execute(query)
         return result.scalars()
+
+    def obter_por_codigo_usuario(self, codigo_usuario):
+        query = self.session.query(UsuarioModel).where(UsuarioModel.codigo_usuario == codigo_usuario)
+        result = self.session.execute(query)
+        return result.scalars().first()

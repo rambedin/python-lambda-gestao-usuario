@@ -23,6 +23,7 @@ def authenticate_user(email: str, senha: str) -> Usuario:
         raise ('Usuario nao encontrado.')
 
     usuario = Usuario()
+    usuario.codigo_usuario = auth.codigo_usuario
     usuario.codigo_dominio = auth.codigo_dominio
     usuario.email = auth.email
 
@@ -36,9 +37,10 @@ def create_token(
     # This function generates token with any claims you want
 
     payload = {
-        "sub": user.email,
+        "sub": user.codigo_usuario,
         "iat": datetime.utcnow(),
         "exp": datetime.utcnow() + timedelta(minutes=ttl),
+        "email": user.email,
         "tenant": user.codigo_dominio,
         "user_role": user.role,
     }
