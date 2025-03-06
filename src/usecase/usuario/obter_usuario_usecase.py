@@ -1,5 +1,5 @@
 from src.adapters.mysql.repositories.usuario_repository import UsuarioRepository
-
+from src.domain.models.usuario import Usuario
 
 class ObterUsuarioUsecase:
 
@@ -11,14 +11,14 @@ class ObterUsuarioUsecase:
 
     def obter_por_codigo_usuario(self, codigo_usuario: str):
 
-        usuario = self.repository.obter_por_codigo_usuario(codigo_usuario)
+        obj = self.repository.obter_por_codigo_usuario(codigo_usuario)
 
-        if usuario is None:
+        if obj is None:
             raise("Nenhum usuário encontrado.")
 
-        return {
-            "id": usuario.codigo_usuario,
-            "name": "xyz",
-            "status": "online",
-            "active": 1
-        }
+        usuario = Usuario()
+        usuario.codigo_usuario = obj.codigo_usuario
+        usuario.codigo_dominio = obj.codigo_dominio
+        usuario.email = obj.email
+
+        return usuario

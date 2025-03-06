@@ -5,12 +5,29 @@ from venv import logger
 from fastapi import FastAPI
 from mangum import Mangum
 from starlette.config import environ
+from starlette.middleware.cors import CORSMiddleware
 
-from src.endpoints.usuario_endpoint import router as usuario_router, login_for_access_token
+from src.endpoints.usuario_endpoint import router as usuario_router
+from src.endpoints.auth_endpoint import router as auth_router
+from src.endpoints.menu_endpoint import router as menu_router
 
 app = FastAPI()
 
+origins = [
+    'http://localhost',
+    'http://localhost:4200'
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 #inclui os endpoints routers
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(menu_router, prefix="/menu", tags=["menu"])
 app.include_router(usuario_router, prefix="/usuario", tags=["usuario"])
 
 handler = Mangum(app)

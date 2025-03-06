@@ -42,7 +42,7 @@ def create_token(
         "exp": datetime.utcnow() + timedelta(minutes=ttl),
         "email": user.email,
         "tenant": user.codigo_dominio,
-        "user_role": user.role,
+        "user_role": user.role
     }
 
     if token_type == "access":
