@@ -1,10 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
+from src.endpoints.requests.usuario_reset_senha_request import UsuarioResetSenhaRequest
 from src.usecase.usuario.obter_usuario_usecase import ObterUsuarioUsecase
+from src.usecase.usuario.processar_usuario_reset_senha_usecase import ProcessarUsuarioResetSenhaUsecase
 from src.util.auth import authenticate_user, create_token, decode_refresh_token
 
 router = APIRouter()
+
+@router.post("/forgot-password")
+async def forgot_password(request: UsuarioResetSenhaRequest):
+
+    try:
+
+        processar_usuario_reset_senha_usecase = ProcessarUsuarioResetSenhaUsecase()
+        processar_usuario_reset_senha_usecase.processar_usuario_reset_senha(request.email)
+
+        return {}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Não foi possivel recuperara a senha do usuario.")
 
 @router.post("/sign-in")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -17,8 +32,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         refresh_token = create_token(usuario, "refresh", 60*24*3)
         return {
             "user":{
-                "id": usuario.codigo_usuario,
-                "name": usuario.email,
+                "id": usuario.id,
+                "name": usuario.nome,
                 "email": usuario.email,
                 "avatar": "images/avatars/brian-hughes.jpg",
                 "status": "online"
@@ -45,7 +60,7 @@ async def refresh_access_token(token: dict = Depends(decode_refresh_token)):
     return {
         "user": {
             "id": usuario.codigo_usuario,
-            "name": usuario.email,
+            "name": usuario.nome,
             "email": usuario.email,
             "avatar": "images/avatars/brian-hughes.jpg",
             "status": "online"

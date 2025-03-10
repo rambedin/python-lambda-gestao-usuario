@@ -1,13 +1,16 @@
-from sqlalchemy import Column, ForeignKey, String
-from sqlalchemy.orm import declarative_base
+import uuid
 
-Base = declarative_base()
+from sqlalchemy import Column, String, ForeignKey
+
+from src.util.base_declarative import Base
+
 
 class UsuarioModel(Base):
-
     __tablename__ = "usuario"
 
-    codigo_usuario = Column(String(36), primary_key=True, index=True)
-    codigo_dominio = Column(String(36), ForeignKey("dominio.codigo_dominio"), nullable=False)
-    email = Column(String(70), nullable=False)
-    senha = Column(String(72), nullable=False)
+    id = Column('id', String(36), primary_key=True, nullable=False, default=uuid.uuid4())
+    dominio_id = Column('dominio_id', String(36), ForeignKey('dominio.id'), primary_key=True, nullable=False)
+    nome = Column('nome', String(120), nullable=False)
+    email = Column('email', String(70), nullable=False)
+    senha = Column('senha', String(72), nullable=False)
+    ativo = Column('ativo', String(1), nullable=False)

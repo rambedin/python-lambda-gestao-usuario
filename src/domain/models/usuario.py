@@ -1,7 +1,8 @@
 class Usuario:
 
-    codigo_dominio = ""
-    codigo_usuario = ""
+    id = ""
+    dominio_id = ""
+    nome = ""
     email = ""
     senha = ""
     role = []

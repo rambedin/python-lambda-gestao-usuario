@@ -1,16 +1,12 @@
 {
-  "resource": "/usuario/me",
-  "path": "/usuario/me",
-  "httpMethod": "GET",
+  "resource": "/auth/forgot-password",
+  "path": "/auth/forgot-password",
+  "httpMethod": "POST",
   "headers": {
-    "Authorization": "Bearer xyz",
-    "Content-Type": "application/json",
-    "X-Tenant-ID": "18c156d8-f960-11ef-a93d-6045cb9e8621"
+    "Content-Type": "application/json"
   },
   "multiValueHeaders": {
-    "Authorization": ["Bearer xyz"],
-    "Content-Type": ["application/json"],
-    "X-Tenant-ID": ["18c156d8-f960-11ef-a93d-6045cb9e8621"]
+    "Content-Type": ["application/json"]
   },
   "queryStringParameters": {
   },
@@ -19,8 +15,8 @@
   "pathParameters": {
   },
   "requestContext": {
-    "resourcePath": "/usuario/me",
-    "httpMethod": "GET",
+    "resourcePath": "/auth/forgot-password",
+    "httpMethod": "POST",
     "requestId": "abcdefg-1234-5678-hijklmnop",
     "identity": {
       "sourceIp": "192.168.0.1",
@@ -29,6 +25,6 @@
     "domainName": "api.example.com",
     "stage": "prod"
   },
-  "body": null,
+  "body": "rbedin.alencar@gmail.com",
   "isBase64Encoded": false
 }

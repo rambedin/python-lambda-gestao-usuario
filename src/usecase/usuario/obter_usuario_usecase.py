@@ -6,19 +6,29 @@ class ObterUsuarioUsecase:
     def __init__(self):
         self.repository = UsuarioRepository()
 
-    def obter_todos(self, codigo_dominio):
-        return self.repository.obter_todos(codigo_dominio)
+    def obter_todos(self, dominio_id):
+        return self.repository.obter_todos(dominio_id)
 
-    def obter_por_codigo_usuario(self, codigo_usuario: str):
+    def obter_por_codigo_usuario(self, id: str):
 
-        obj = self.repository.obter_por_codigo_usuario(codigo_usuario)
+        obj = self.repository.obter_por_codigo_usuario(id)
 
         if obj is None:
-            raise("Nenhum usuário encontrado.")
+            raise(f"Nenhum usuário encontrado com o código: {id}")
 
         usuario = Usuario()
-        usuario.codigo_usuario = obj.codigo_usuario
-        usuario.codigo_dominio = obj.codigo_dominio
+        usuario.nome = obj.nome
+        usuario.id = obj.id
+        usuario.dominio_id = obj.dominio_id
         usuario.email = obj.email
 
         return usuario
+
+    def obter_por_email(self, email: str):
+
+        obj = self.repository.obter_por_email(email)
+
+        if obj is None:
+            raise(f"Nenhum usuário encontrado com o email: {email}")
+
+        return obj
