@@ -1,11 +1,9 @@
 from src.adapters.mysql.models.dominio_model import DominioModel
-from src.util.get_session_db import get_session_db
+from src.util.get_session_db import session_scope
 
 
 class DominioRepository:
 
-    def __init__(self):
-        self.session = get_session_db()
-
     def obter_todos(self):
-        return self.session.query(DominioModel).all()
+        with session_scope() as session:
+            return self.session.query(DominioModel).all()

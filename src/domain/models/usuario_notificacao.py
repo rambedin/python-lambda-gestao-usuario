@@ -11,7 +11,8 @@ class UsuarioNotificacao(BaseModel):
     icone: str
     titulo: str
     descricao: str
-    data_hora_cadastro: datetime
+    data_hora_cadastro: datetime.datetime
     link: Optional[str] = None
     e_rota: bool
+    lida: bool
     ativo: bool

@@ -1,55 +1,63 @@
 from src.adapters.mysql.models.usuario_model import UsuarioModel
-from src.util.get_session_db import get_session_db
+from src.domain.models.usuario import Usuario
 from sqlalchemy.exc import SQLAlchemyError
+
+from src.util.get_session_db import session_scope
+
 
 class UsuarioRepository:
 
-    def __init__(self):
-        self.session = get_session_db()
-
-    def obter_por_email_e_senha(self, email, senha, ativo=1):
+    def obter_por_email_e_senha(self, email, senha, ativo=1) -> Usuario:
         try:
-            usuario = self.session.query(UsuarioModel).filter(
-                UsuarioModel.email == email,
-                UsuarioModel.senha == senha,
-                UsuarioModel.ativo == ativo
-            ).first()
 
-            if usuario:
-                return usuario
+            with session_scope() as session:
+                usuario = session.query(UsuarioModel).filter(
+                    UsuarioModel.email == email,
+                    UsuarioModel.senha == senha,
+                    UsuarioModel.ativo == ativo
+                ).first()
 
-            return None
+                if not usuario:
+                    return None
+
+                return Usuario.model_validate(usuario.__dict__)
 
         except SQLAlchemyError as e:
-            self.session.rollback()
+            session.rollback()
             raise Exception(f"Erro ao autenticar usuário: {str(e)}")
 
-    def obter_todos(self, dominio_id: str):
+    def obter_todos(self, dominio_id: str) -> list[Usuario]:
+        """Obtém todos os usuários de um domínio e retorna uma lista de Pydantic"""
         try:
-            return self.session.query(UsuarioModel).filter(
-                UsuarioModel.dominio_id == dominio_id
-            ).all()
+            with session_scope() as session:  # ✅ Corrigido: session_scope() precisa de ()
+                usuarios = session.query(UsuarioModel).filter(
+                    UsuarioModel.dominio_id == dominio_id
+                ).all()
+
+                if not usuarios:
+                    return []  # ✅ Retorna lista vazia se não encontrar usuários
+
+                # Converte lista de SQLAlchemy Models para lista de Pydantic Models
+                return [Usuario.model_validate(usuario.__dict__) for usuario in usuarios]  # ✅ Conversão para Pydantic
         except SQLAlchemyError as e:
-            self.session.rollback()
             raise Exception(f"Erro ao buscar usuários: {str(e)}")
 
     def obter_por_codigo_usuario(self, id):
         try:
-            return self.session.query(UsuarioModel).filter(
-                UsuarioModel.id == id
-            ).first()
+            with session_scope() as session:
+                return session.query(UsuarioModel).filter(
+                    UsuarioModel.id == id
+                ).first()
         except SQLAlchemyError as e:
-            self.session.rollback()
+            session.rollback()
             raise Exception(f"Erro ao buscar usuário por código: {str(e)}")
 
     def obter_por_email(self, email):
         try:
-            return self.session.query(UsuarioModel).filter(
-                UsuarioModel.email == email
-            ).first()
+            with session_scope() as session:
+                return session.query(UsuarioModel).filter(
+                    UsuarioModel.email == email
+                ).first()
         except SQLAlchemyError as e:
-            self.session.rollback()
+            session.rollback()
             raise Exception(f"Erro ao buscar usuário por email: {str(e)}")
-
-    def fechar_sessao(self):
-        self.session.close()
