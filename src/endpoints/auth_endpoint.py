@@ -53,13 +53,11 @@ async def refresh_access_token(token: dict = Depends(decode_refresh_token)):
     usuario_usecase = ObterUsuarioUsecase()
     usuario = usuario_usecase.obter_por_codigo_usuario(token.get("sub"))
 
-    print(usuario)
-
     access_token = create_token(usuario, "access", 60)
     refresh_token = create_token(usuario, "refresh", 60*24*3)
     return {
         "user": {
-            "id": usuario.codigo_usuario,
+            "id": usuario.id,
             "name": usuario.nome,
             "email": usuario.email,
             "avatar": "images/avatars/brian-hughes.jpg",

@@ -2,6 +2,7 @@ import datetime
 import uuid
 
 from sqlalchemy import Column, String, ForeignKey, DateTime
+from sqlalchemy_utils import UUIDType
 
 from src.util.base_declarative import Base
 
@@ -10,7 +11,7 @@ class UsuarioResetSenhaModel(Base):
 
     __tablename__ = 'usuario_recuperacao_senha'
 
-    id = Column('id', String(36), primary_key=True, index=True, nullable=False, default=uuid.uuid4())
+    id = Column('id', String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
 
     usuario_id = Column('usuario_id', String(36), ForeignKey('usuario.id'), nullable=False)
     usuario_dominio_id  = Column('usuario_dominio_id', String(36), ForeignKey('usuario.dominio_id'), nullable=False)

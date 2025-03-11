@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.endpoints.usuario_endpoint import router as usuario_router
 from src.endpoints.auth_endpoint import router as auth_router
-from src.endpoints.menu_endpoint import router as menu_router
+from src.endpoints.navegacao_item_endpoint import router as navegacao_item_router
 
 app = FastAPI()
 
@@ -27,7 +27,7 @@ app.add_middleware(
 
 #inclui os endpoints routers
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(menu_router, prefix="/menu", tags=["menu"])
+app.include_router(navegacao_item_router, prefix="/navegacao", tags=["navegacao"])
 app.include_router(usuario_router, prefix="/usuario", tags=["usuario"])
 
 handler = Mangum(app)

@@ -11,3 +11,4 @@ class UsuarioResetSenhaRepository:
     def salvar(self, entity: UsuarioNotificacaoModel):
         self.session.add(entity)
         self.session.commit()
+        self.session.refresh(entity)

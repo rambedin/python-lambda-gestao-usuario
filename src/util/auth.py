@@ -22,11 +22,13 @@ def authenticate_user(email: str, senha: str) -> Usuario:
     if auth is None:
         raise ('Usuario nao encontrado.')
 
-    usuario = Usuario()
-    usuario.id = auth.id
-    usuario.dominio_id = auth.dominio_id
-    usuario.nome = auth.nome
-    usuario.email = auth.email
+    usuario = Usuario(
+        id = auth.id,
+        dominio_id= auth.dominio_id,
+        nome = auth.nome,
+        email = auth.email,
+        ativo= auth.ativo
+    )
 
     return usuario
 

@@ -9,4 +9,4 @@ class DominioModel(Base):
 
     __tablename__ = 'dominio'
 
-    codigo_dominio = Column('id', String(36), primary_key=True, index=True, nullable=False, default=uuid.uuid4())
+    codigo_dominio = Column('id', String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))

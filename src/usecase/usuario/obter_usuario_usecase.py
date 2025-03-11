@@ -16,11 +16,13 @@ class ObterUsuarioUsecase:
         if obj is None:
             raise(f"Nenhum usuário encontrado com o código: {id}")
 
-        usuario = Usuario()
-        usuario.nome = obj.nome
-        usuario.id = obj.id
-        usuario.dominio_id = obj.dominio_id
-        usuario.email = obj.email
+        usuario = Usuario(
+            id=obj.id,
+            nome=obj.nome,
+            dominio_id=obj.dominio_id,
+            email=obj.email,
+            ativo=obj.ativo
+        )
 
         return usuario
 
