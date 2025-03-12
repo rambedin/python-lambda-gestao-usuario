@@ -6,6 +6,7 @@ class UsuarioNotificacaoModel(Base):
     __tablename__ = "usuario_notificacao"
 
     id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
+
     usuario_id = Column(String(36), ForeignKey("usuario.id"), nullable=False)
     usuario_dominio_id = Column(String(36), ForeignKey("usuario.dominio_id"), nullable=False)
 
@@ -16,4 +17,5 @@ class UsuarioNotificacaoModel(Base):
     link = Column(String(60), nullable=True)
     e_rota = Column(Boolean, nullable=False, default=False)
     lida = Column(Boolean, nullable=False, default=False)
+
     ativo = Column(Boolean, nullable=False, default=True)
