@@ -5,12 +5,12 @@ from sqlalchemy.exc import SQLAlchemyError
 from src.util.logger import logger
 
 
-class AtualizarNotificacaoUsecase:
+class UsuarioNotificacaoUsecase:
 
     def __init__(self):
         self.repository = UsuarioNotificacaoRepository()
 
-    def atualizar_por_codigo_notificacao(self, id):
+    def atualizar_notificacao_lida(self, id):
         try:
 
             notificaco = self.repository.obter_por_codigo_notificacao(id)
@@ -28,7 +28,7 @@ class AtualizarNotificacaoUsecase:
         except SQLAlchemyError as e:
             raise Exception(f"Erro ao buscar notificações: {str(e)}")
 
-    def excluir_por_codigo_notificacao(self, id):
+    def excluir_notificacao(self, id):
         try:
 
             notificaco = self.repository.obter_por_codigo_notificacao(id)

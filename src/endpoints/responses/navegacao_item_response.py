@@ -9,3 +9,4 @@ class NavegacaoItemResponse(BaseModel):
     type: str
     icon: Optional[str] = None
     link: Optional[str] = None
+    children: Optional[list] = None
