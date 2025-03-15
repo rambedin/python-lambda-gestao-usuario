@@ -5,9 +5,12 @@ from typing import Optional, List
 class NavegacaoItem(BaseModel):
     id: int
     titulo: str
+    subtitulo: Optional[str] = None
     tipo: str
     icone: Optional[str] = None
     link: Optional[str] = None
+    badge_titulo: Optional[str] = None
+    badge_estilo: Optional[str] = None
     ordem: int
     ativo: bool
     navegacao_item_id: Optional[int] = None

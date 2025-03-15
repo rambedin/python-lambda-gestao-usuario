@@ -2,7 +2,7 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from src.endpoints.responses.navegacao_item_response import NavegacaoItemResponse
+from src.endpoints.responses.navegacao_item_response import NavegacaoItemResponse, NavegacaoItemResponseBadge
 from src.usecase.usuario.obter_navegacao_item_usecase import ObterNavegacaoItemUsecase
 from src.util.auth import decode_refresh_token
 
@@ -21,13 +21,19 @@ async def obter_todos(token: dict = Depends(decode_refresh_token)):
             return NavegacaoItemResponse(
                 id=item["id"],
                 title=item["titulo"],
+                subtitle=item["subtitulo"],
                 type=item["tipo"],
                 icon=item["icone"],
                 link=item["link"],
-                children=[map_to_response(sub) for sub in item["itens"]]
+                badge=NavegacaoItemResponseBadge(
+                    title=item["badge_titulo"],
+                    classes=item["badge_estilo"]
+                ),
+                children=[map_to_response(sub) for sub in item["itens"]],
+                disabled= not item.get("ativo", False)
             )
 
-        data = [map_to_response(item) for item in menu_hierarquico]
+        data = [map_to_response(item).dict(exclude_none=True) for item in menu_hierarquico]
 
         response = {
             "compact": data,
