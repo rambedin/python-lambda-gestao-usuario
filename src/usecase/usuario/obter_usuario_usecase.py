@@ -6,6 +6,9 @@ class ObterUsuarioUsecase:
     def __init__(self):
         self.repository = UsuarioRepository()
 
+    def obter_todos_paginado(self, dominio_id):
+        return self.repository.obter_todos_paginado(dominio_id)
+
     def obter_todos(self, dominio_id):
         return self.repository.obter_todos(dominio_id)
 

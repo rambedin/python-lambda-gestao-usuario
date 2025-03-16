@@ -43,8 +43,6 @@ class UsuarioNotificacaoRepository:
 
                 notificacoes = query.all()
 
-                logger.info(f"DEBUG: Resultado da busca = {notificacoes}")
-
                 if not notificacoes:
                     return []
 

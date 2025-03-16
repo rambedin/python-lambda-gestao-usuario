@@ -32,7 +32,7 @@ async def obter(token: dict = Depends(decode_refresh_token)):
         return data
 
     except Exception as e:
-        print(e)
+        logger.error(f"Não foi possivel obter as notificações do usuário: {e}")
         raise HTTPException(status_code=500, detail="Não foi possivel obter as notificações do usuário.")
 
 @router.patch("")

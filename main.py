@@ -3,6 +3,7 @@ import platform
 from venv import logger
 
 from fastapi import FastAPI
+from fastapi_pagination import add_pagination
 from mangum import Mangum
 from starlette.config import environ
 from starlette.middleware.cors import CORSMiddleware
@@ -31,6 +32,9 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(navegacao_item_router, prefix="/navegacao", tags=["navegacao"])
 app.include_router(notificacao_router, prefix="/notificacao", tags=["notificacao"])
 app.include_router(usuario_router, prefix="/usuario", tags=["usuario"])
+
+# Adiciona suporte à paginação na API
+add_pagination(app)
 
 handler = Mangum(app)
 

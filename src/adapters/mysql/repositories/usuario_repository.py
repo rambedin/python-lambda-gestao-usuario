@@ -1,9 +1,8 @@
-from src.adapters.mysql.models.usuario_model import UsuarioModel
-from src.domain.models.usuario import Usuario
-from sqlalchemy.exc import SQLAlchemyError
-
 from src.util.get_session_db import session_scope
-
+from sqlalchemy.exc import SQLAlchemyError
+from fastapi_pagination.ext.sqlalchemy import paginate
+from src.domain.models.usuario import Usuario
+from src.adapters.mysql.models.usuario_model import UsuarioModel
 
 class UsuarioRepository:
 
@@ -25,6 +24,14 @@ class UsuarioRepository:
         except SQLAlchemyError as e:
             session.rollback()
             raise Exception(f"Erro ao autenticar usuário: {str(e)}")
+
+    def obter_todos_paginado(self, dominio_id: str):
+        try:
+            with session_scope() as session:
+                query = session.query(UsuarioModel).filter(UsuarioModel.dominio_id == dominio_id)
+                return paginate(query)
+        except SQLAlchemyError as e:
+            raise Exception(f"Erro ao buscar usuários: {str(e)}")
 
     def obter_todos(self, dominio_id: str) -> list[Usuario]:
         """Obtém todos os usuários de um domínio e retorna uma lista de Pydantic"""
