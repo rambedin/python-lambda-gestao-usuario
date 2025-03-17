@@ -1,5 +1,3 @@
-import uuid
-
 from sqlalchemy import Column, String, Integer, ForeignKey
 
 from src.util.base_declarative import Base

@@ -57,21 +57,23 @@ class UsuarioNotificacaoRepository:
             session.rollback()
             raise Exception(f"Erro ao buscar notificações: {str(e)}")
 
-    #metodo para persistir uma notificações de usuario.
+    #--------------------------------------------------------------------------------------------------------
+    # metodo para persistir uma notificações de usuario.
+    #--------------------------------------------------------------------------------------------------------
     def salvar(self, entity: UsuarioNotificacaoModel) -> UsuarioNotificacaoModel:
         try:
 
-            logger.info(f"Salvando entidade com ID: {entity.id}")
-
             with session_scope() as session:
                 session.add(entity)
-                session.flush()  # Garante que os dados são enviados antes do commit
+                session.flush()
                 session.commit()
+
+            logger.info(f"Notificação salva com sucesso!")
 
             return entity
 
         except SQLAlchemyError as e:
-            session.rollback()  # Evita que a sessão fique corrompida
+            session.rollback()
             logger.error(f"Erro ao salvar entidade: {e}", exc_info=True)
             raise Exception(f"Erro ao salvar a notificação do usuário: {str(e)}")
 
@@ -80,10 +82,6 @@ class UsuarioNotificacaoRepository:
     #--------------------------------------------------------------------------------------------------------
     def atualizar(self, domain: UsuarioNotificacao) -> UsuarioNotificacao:
         try:
-
-            logger.info(f"Atualizando entidade com ID: {domain.id}")
-
-            logger.info(domain.ativo)
 
             with session_scope() as session:
 

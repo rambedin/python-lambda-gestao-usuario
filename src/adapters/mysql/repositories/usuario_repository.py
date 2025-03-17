@@ -4,6 +4,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from src.domain.models.usuario import Usuario
 from src.adapters.mysql.models.usuario_model import UsuarioModel
 
+
 class UsuarioRepository:
 
     def obter_por_email_e_senha(self, email, senha, ativo=1) -> Usuario:
@@ -19,7 +20,7 @@ class UsuarioRepository:
                 if not usuario:
                     return None
 
-                return Usuario.model_validate(usuario.__dict__)
+                return Usuario.model_validate(usuario.to_dict())
 
         except SQLAlchemyError as e:
             session.rollback()
@@ -52,9 +53,17 @@ class UsuarioRepository:
     def obter_por_codigo_usuario(self, id):
         try:
             with session_scope() as session:
-                return session.query(UsuarioModel).filter(
-                    UsuarioModel.id == id
+
+                usuario = session.query(UsuarioModel).filter(
+                    UsuarioModel.id == id,
+                    UsuarioModel.ativo == True
                 ).first()
+
+                if not usuario:
+                    raise(f'Usuário nao encontrado com a id: {id}')
+
+                return Usuario.model_validate(usuario.to_dict())
+
         except SQLAlchemyError as e:
             session.rollback()
             raise Exception(f"Erro ao buscar usuário por código: {str(e)}")

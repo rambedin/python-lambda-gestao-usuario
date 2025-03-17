@@ -5,30 +5,22 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
-
 from src.domain.models.usuario import Usuario
 from src.usecase.usuario.auth_usuario_usecase import AuthUsuarioUsecase
+from src.util.logger import logger
 from src.util.settings import access_token_jwk, refresh_token_jwk
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 def authenticate_user(email: str, senha: str) -> Usuario:
 
-    print(f"autenticando o email: {email} e senha: {senha}...")
+    logger.info(f"autenticando o email: {email} e senha: {senha}...")
 
     auth_usecase = AuthUsuarioUsecase()
-    auth = auth_usecase.auth(email, senha)
+    usuario = auth_usecase.auth(email, senha)
 
-    if auth is None:
+    if usuario is None:
         raise ('Usuario nao encontrado.')
-
-    usuario = Usuario(
-        id = auth.id,
-        dominio_id= auth.dominio_id,
-        nome = auth.nome,
-        email = auth.email,
-        ativo= auth.ativo
-    )
 
     return usuario
 
@@ -44,8 +36,8 @@ def create_token(
         "iat": datetime.utcnow(),
         "exp": datetime.utcnow() + timedelta(minutes=ttl),
         "email": usuario.email,
-        "tenant": usuario.dominio_id,
-        "user_role": usuario.role
+        "tenant": usuario.dominio.id,
+        "user_role": usuario.perfil.tag
     }
 
     if token_type == "access":

@@ -13,8 +13,8 @@ async def forgot_password(request: UsuarioResetSenhaRequest):
 
     try:
 
-        processar_usuario_reset_senha_usecase = ProcessarUsuarioResetSenhaUsecase()
-        processar_usuario_reset_senha_usecase.processar_usuario_reset_senha(request.email)
+        usecase = ProcessarUsuarioResetSenhaUsecase()
+        usecase.processar_usuario_reset_senha(request.email)
 
         return {}
 
