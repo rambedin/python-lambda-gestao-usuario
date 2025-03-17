@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_pagination import Page
 
+from src.endpoints.responses.perfil_response import PerfilResponse
 from src.endpoints.responses.usuario_response import UsuarioResponse
 from src.usecase.usuario.obter_usuario_usecase import ObterUsuarioUsecase
 from src.util.auth import decode_refresh_token
@@ -26,10 +27,15 @@ async def obter_todos(token: dict = Depends(decode_refresh_token)):
         paginacao = usecase.obter_todos_paginado(dominio_id)
 
         def map_to_response(item):
+            logger.info(item)
             return UsuarioResponse(
                 id=item.id,
                 nome=item.nome,
-                email=item.email
+                email=item.email,
+                perfil=PerfilResponse(
+                    id=item.perfil.id,
+                    nome=item.perfil.nome
+                )
             )
 
         paginacao.items = [map_to_response(i) for i in paginacao.items]

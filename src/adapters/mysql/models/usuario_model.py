@@ -1,10 +1,9 @@
 import uuid
-
-from sqlalchemy import Column, String, ForeignKey, Boolean
-from sqlalchemy_utils import UUIDType
-
+from sqlalchemy import Column, String, ForeignKey, Boolean, Integer
+from sqlalchemy.orm import relationship
 from src.util.base_declarative import Base
 
+from src.adapters.mysql.models.perfil_model import PerfilModel
 
 class UsuarioModel(Base):
     __tablename__ = "usuario"
@@ -15,3 +14,7 @@ class UsuarioModel(Base):
     email = Column('email', String(70), nullable=False)
     senha = Column('senha', String(72), nullable=False)
     ativo = Column('ativo', Boolean, nullable=False)
+
+    perfil_id = Column(Integer, ForeignKey('perfil.id'), nullable=False)
+
+    perfil = relationship("PerfilModel", back_populates="usuarios", lazy="joined", foreign_keys=[perfil_id])

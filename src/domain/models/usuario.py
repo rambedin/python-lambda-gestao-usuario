@@ -1,6 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel, field_validator, EmailStr
 
+from src.domain.models.perfil import Perfil
+
+
 class Usuario(BaseModel):
     id: str
     dominio_id: str
@@ -9,6 +12,8 @@ class Usuario(BaseModel):
     senha: Optional[str] = None
     role: Optional[str] = None
     ativo: bool
+
+    perfil: Perfil
 
     @field_validator("nome")
     @classmethod

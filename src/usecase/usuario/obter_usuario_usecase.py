@@ -1,4 +1,5 @@
 from src.adapters.mysql.repositories.usuario_repository import UsuarioRepository
+from src.domain.models.perfil import Perfil
 from src.domain.models.usuario import Usuario
 
 class ObterUsuarioUsecase:
@@ -24,7 +25,8 @@ class ObterUsuarioUsecase:
             nome=obj.nome,
             dominio_id=obj.dominio_id,
             email=obj.email,
-            ativo=obj.ativo
+            ativo=obj.ativo,
+            perfil=Perfil(id=obj.perfil.id, nome=obj.perfil.nome, tag=obj.perfil.tag)
         )
 
         return usuario
