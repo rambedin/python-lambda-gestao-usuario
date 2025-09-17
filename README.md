@@ -1,22 +1,22 @@
-# 🌀 Lambda FastAPI - Gestão de Usuários
+# Projeto de Autenticação de Usuários - FastAPI + SQLAlchemy + Lambda
 
-Este projeto implementa uma **AWS Lambda** em **Python** para **gestão de usuários**, construída sobre **FastAPI** e **SQLAlchemy**, utilizando a **Arquitetura Hexagonal (Ports & Adapters)**.  
+Este projeto implementa um serviço de **autenticação de usuários** para login e gestão de credenciais, construído em **Python**, com **FastAPI**, **SQLAlchemy** e preparado para rodar em **AWS Lambda**.  
 
-A organização do código foi estruturada em camadas (`domain`, `usecase`, `adapters`, `endpoint`) para garantir **separação de responsabilidades**, **facilidade de testes** e **alta manutenibilidade**.
-
----
-
-## 🚀 Funcionalidades
-
-- CRUD completo de usuários (criar, listar, atualizar, excluir).  
-- Endpoints documentados automaticamente via **Swagger/OpenAPI**.  
-- Integração com banco de dados via **SQLAlchemy ORM**.  
-- Deploy serverless em **AWS Lambda + API Gateway**.  
-- Estrutura hexagonal garantindo baixo acoplamento entre camadas.  
+A arquitetura segue o padrão **Hexagonal (Ports & Adapters)**, separando regras de negócio, camadas de aplicação, adaptação de infraestrutura e endpoints.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Funcionalidades
+
+- Autenticação e login de usuários.  
+- Recuperação e redefinição de senha.  
+- Perfis e permissões de acesso.  
+- Notificação de eventos relacionados ao usuário.  
+- Endpoints RESTful documentados automaticamente com **Swagger/OpenAPI**. 
+
+---
+
+## Tecnologias Utilizadas
 
 - **Python 3.10+**  
 - **FastAPI** (API REST e documentação automática)  
@@ -27,39 +27,58 @@ A organização do código foi estruturada em camadas (`domain`, `usecase`, `ada
 
 ---
 
-## 📂 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
-.
-├── domain/                 # Regras de negócio e entidades do domínio
-│   └── user.py             # Entidade User
+src/
+├── adapters/
+│ └── mysql/ # Implementações ligadas ao banco de dados
+│ ├── models/
+│ └── repositories/
 │
-├── usecase/                # Casos de uso (regras de aplicação)
-│   └── user_usecase.py     # Lógica de criação, listagem, atualização e exclusão
+├── domain/ # Regras de negócio e entidades
+│ ├── exceptions/ # Exceções de domínio
+│ └── models/ # Modelos de domínio (Usuario, Perfil, etc.)
 │
-├── adapters/               # Portas de entrada/saída (banco, repositórios)
-│   ├── database.py         # Configuração do SQLAlchemy
-│   └── user_repository.py  # Implementação do repositório de usuários
+├── endpoints/ # Interfaces HTTP (FastAPI)
+│ ├── requests/ # Schemas de entrada
+│ ├── responses/ # Schemas de saída
+│ ├── auth_endpoint.py # Endpoints de autenticação/login
+│ ├── menu_endpoint.py
+│ ├── navegacao_item_endpoint.py
+│ ├── notificacao_endpoint.py
+│ └── usuario_endpoint.py
 │
-├── endpoint/               # Interface HTTP (FastAPI)
-│   └── user_endpoint.py    # Rotas e controladores de usuário
+├── usecase/ # Casos de uso (lógica de aplicação)
+│ └── usuario/
+│ ├── auth_usuario_usecase.py
+│ ├── obter_usuario_usecase.py
+│ ├── processar_usuario_reset_senha_usecase.py
+│ └── ...
 │
-├── main.py                 # Ponto de entrada (FastAPI + Mangum)
-├── requirements.txt        # Dependências do projeto
-└── README.md               # Documentação
+├── util/ # Utilitários e helpers
+│ ├── auth.py
+│ ├── base_declarative.py
+│ ├── get_session_db.py
+│ ├── logger.py
+│ ├── settings.py
+│ └── debugger.py
+│
+├── config.py # Configurações globais
+└── main.py # Ponto de entrada da aplicação
 ```
 
 ---
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
-- **Python 3.10+**  
-- Conta AWS configurada (para deploy com Lambda + API Gateway)  
-- Banco de dados relacional (ex: PostgreSQL, MySQL ou SQLite local para testes)  
+- Python 3.10+  
+- MySQL rodando (ou outro banco compatível com SQLAlchemy)  
+- Conta AWS para deploy serverless  
 
 ---
 
-## ⚡ Como rodar localmente
+## Como rodar localmente
 
 1. Clone o repositório e instale as dependências:
 
@@ -70,7 +89,11 @@ pip install -r requirements.txt
 2. Configure as variáveis de ambiente do banco de dados, por exemplo:
 
 ```bash
-export DATABASE_URL="sqlite:///./users.db"
+DATABASE_USERNAME
+DATABASE_PASSWORD 
+DATABASE_HOST 
+DATABASE_PORT
+DATABASE_NAME 
 ```
 
 3. Execute o servidor local:
@@ -82,60 +105,4 @@ uvicorn main:app --reload
 4. Acesse a documentação interativa em:
 
 - Swagger: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)  
-- Redoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)  
-
----
-
-## ☁️ Deploy na AWS Lambda
-
-Este projeto utiliza **Mangum** para rodar o FastAPI em Lambda.  
-O `main.py` expõe o handler compatível com o Lambda:
-
-```python
-from fastapi import FastAPI
-from mangum import Mangum
-
-app = FastAPI()
-
-# importa e inclui os endpoints
-from endpoint import user_endpoint
-app.include_router(user_endpoint.router)
-
-handler = Mangum(app)
-```
-
-Para deploy:
-
-1. Empacote o projeto em `.zip` (com dependências).  
-2. Suba no **AWS Lambda** (runtime: Python 3.10).  
-3. Configure o **API Gateway** para expor os endpoints REST.  
-
----
-
-## 📑 Exemplo de Endpoint
-
-### Criar usuário
-```http
-POST /users
-Content-Type: application/json
-
-{
-  "name": "Ramon Bedin",
-  "email": "ramon@example.com"
-}
-```
-
-### Resposta
-```json
-{
-  "id": 1,
-  "name": "Ramon Bedin",
-  "email": "ramon@example.com"
-}
-```
-
----
-
-## 📜 Licença
-
-Este projeto é livre para estudos e melhorias. 🚀
+- Redoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
