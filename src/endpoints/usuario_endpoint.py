@@ -7,16 +7,17 @@ from src.usecase.usuario.obter_usuario_usecase import ObterUsuarioUsecase
 from src.util.auth import decode_refresh_token
 from src.util.logger import logger
 
-
 router = APIRouter()
 
 @router.get("/me")
 async def me(token: dict = Depends(decode_refresh_token)):
     try:
         usecase = ObterUsuarioUsecase()
-        return usecase.obter_por_codigo_usuario(token.get('sub')) #sub = codigo_usuario no token
+        return usecase.obter_por_codigo_usuario(token.get('sub'))  # `sub` = código do usuário no token
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Não foi possivel obter as informações do usuário.")
+        logger.error(f"Erro ao obter usuário: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Não foi possível obter as informações do usuário.")
+
 
 @router.get("", response_model=Page[UsuarioResponse])
 async def obter_todos(token: dict = Depends(decode_refresh_token)):
@@ -24,30 +25,32 @@ async def obter_todos(token: dict = Depends(decode_refresh_token)):
         dominio_id = token.get('tenant')
 
         usecase = ObterUsuarioUsecase()
-        paginacao = usecase.obter_todos_paginado(dominio_id)
+        usuario_paginados = usecase.obter_todos_paginado(dominio_id)
 
         def map_to_response(item):
-            logger.info(item)
+            logger.info(f"Convertendo usuário: {item}")
             return UsuarioResponse(
                 id=item.id,
                 nome=item.nome,
                 email=item.email,
+                avatar=f'images/avatars/{item.id}.jpg',
                 perfil=PerfilResponse(
-                    id=item.perfil.id,
-                    nome=item.perfil.nome
-                )
+                    id=item.perfil.id if item.perfil else None,
+                    nome=item.perfil.nome if item.perfil else None
+                ) if item.perfil else None,
+                ativo=item.ativo
             )
 
-        paginacao.items = [map_to_response(i) for i in paginacao.items]
+        usuario_paginados.items = [map_to_response(i) for i in usuario_paginados.items]
 
-        logger.info(f"listando usuarios para o dominio: {dominio_id}")
+        logger.info(f"Listando usuários para o domínio: {dominio_id}")
 
-        return Page[UsuarioResponse](
-            items=paginacao.items,
-            total=paginacao.total,
-            page=paginacao.page,
-            size=paginacao.size,
-            pages=paginacao.pages
+        return Page(
+            items=usuario_paginados.items,
+            total=usuario_paginados.total,
+            page=usuario_paginados.page,
+            size=usuario_paginados.size,
+            pages=usuario_paginados.pages
         )
 
     except Exception as e:

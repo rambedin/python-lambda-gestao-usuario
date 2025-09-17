@@ -16,6 +16,7 @@ from src.endpoints.navegacao_item_endpoint import router as navegacao_item_route
 app = FastAPI()
 
 origins = [
+    '*'
     'http://localhost',
     'http://localhost:4200'
 ]

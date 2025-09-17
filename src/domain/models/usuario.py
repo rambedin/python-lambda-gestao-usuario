@@ -6,6 +6,8 @@ from src.domain.models.perfil import Perfil
 
 
 class Usuario(BaseModel):
+
+    # Atributos Base
     id: str
     dominio_id: str
     nome: str
@@ -14,12 +16,9 @@ class Usuario(BaseModel):
     role: Optional[str] = None
     ativo: bool
 
-    dominio: Dominio
-    perfil: Perfil
+    # Relacionamentos
+    dominio: Optional[Dominio] = None
+    perfil: Optional[Perfil] = None
 
-    @field_validator("nome")
-    @classmethod
-    def validate_nome(cls, nome: str) -> str:
-        if not nome or len(nome) < 3:
-            raise ValueError(f"Nome deve ter pelo menos 3 caracteres (atual: {len(nome)})")
-        return nome
+    # Configuração para aceitar objetos SQLAlchemy automaticamente
+    model_config = {"from_attributes": True}  # ✅ Permite receber `UsuarioModel` diretamente

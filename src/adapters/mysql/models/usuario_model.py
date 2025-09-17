@@ -1,11 +1,9 @@
 import uuid
 from sqlalchemy import Column, String, ForeignKey, Boolean, Integer
 from sqlalchemy.orm import relationship
-
-from src.domain.models.usuario import Usuario
 from src.util.base_declarative import Base
 
-# Necessário para o relationship funcionar.
+# Necessário para evitar erro de importação cíclica
 from src.adapters.mysql.models.dominio_model import DominioModel
 from src.adapters.mysql.models.perfil_model import PerfilModel
 
@@ -22,14 +20,12 @@ class UsuarioModel(Base):
 
     perfil_id = Column(Integer, ForeignKey('perfil.id'), nullable=False)
 
-    # Relationships
-
+    # ✅ Correção: Usar strings no `relationship()`
     dominio = relationship("DominioModel", back_populates="usuarios", lazy="joined", foreign_keys=[dominio_id])
     perfil = relationship("PerfilModel", back_populates="usuarios", lazy="joined", foreign_keys=[perfil_id])
 
     # Mappers
-
-    def to_dict(self):
+    def to_domain(self):
         return {
             "id": self.id,
             "dominio_id": self.dominio_id,
@@ -40,7 +36,7 @@ class UsuarioModel(Base):
                 "id": self.dominio.id,
                 "nome": self.dominio.nome,
                 "ativo": self.dominio.ativo
-            },
+            } if self.dominio else None,
             "perfil": {
                 "id": self.perfil.id,
                 "nome": self.perfil.nome,
